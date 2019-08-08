@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """  Checks file size and format of time-series data for EDF conversion
 
-
-Contains 4 functions
+Contains 4 functions:
 
 1) get_file_size() - gets file size across days for one subject -subroutine
 2) df_to_excel_form() - save dataframe as excel and format -subroutine
@@ -17,28 +16,18 @@ df = file_check_main(paths,Fs)
 file_del(paths,thresh)
 
 
-
-
 Created on Mon Aug  5 15:17:36 2019
 @author: Pantelis Antonoudiou
 """
 
 ### **** USER INTERACTION **** ###
 ## ---- SET PATHS AND PARAMETERS -------------- ##
-# define paths
-eeg_path = "C:/EEG_data"
-edf_path = "C:/EDF_data"
-# define sampling rate
-Fs = 4000;
-# set threshold for file size
-thresh = 80* 1e6 # bytes
 
-### **** Run Functions **** ###
-# run to check files before EDF conversion- get dataframe and excel output
-# df = file_check_main(paths,Fs)
+Fs = float(input("Enter sampling rate (samples/sec): ")); # samples per second
+thresh = float(input("Min File size (MB): ")) * 1e6 ; # time - in hours- for each epoch 
+eeg_path = input("Enter EEG path: ") #"C:/EEG_data" 
+edf_path = input("Enter EDF path: ") #"C:/EDF_data"
 
-# run to delete files converted EDF files that are too small
-# file_del(paths,thresh)
 
 ## ------------------------------------------ ##
 

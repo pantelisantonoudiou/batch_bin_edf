@@ -23,15 +23,10 @@ Created on Wed Jul 31 11:08:43 2019
 ### **** USER INTERACTION **** ###
 
 ## ---- SET PATHS AND PARAMETERS -------------- ##
-Fs = 4000; # samples per second
-time_bin = 12; # time - in hours- for each epoch 
-eeg_path = "C:/EEG_data" 
-edf_path = "C:/EDF_data"
-
-### **** Run Function **** ###
-# lfp_edf_main(paths,Fs,time_bin)
-
-## ------------------------------------------ ##
+Fs = int(input("Enter sampling rate (samples/sec): ")); # 4000
+time_bin = int(input("Enter time (in hours): ")); # 12
+eeg_path = input("Enter EEG path: ") #"C:/EEG_data" 
+edf_path = input("Enter EDF path: ") #"C:/EDF_data"
 
 
 # Import libraries
@@ -41,12 +36,8 @@ from string import ascii_lowercase
 from tqdm import tqdm  
 import numpy as np
 
- # veirfy that loading path exists
-if not os.path.exists(edf_path):
-    os.makedirs(edf_path)
-
 # gather paths in a dict
-paths = {'eeg_path': eeg_path, 'edf_path':edf_path } 
+paths = {'eeg_path': eeg_path, 'edf_path':edf_path} 
     
 # get file size for one subject
 def get_file_size(eeg_path,Fs):
@@ -89,6 +80,7 @@ def lfp_to_edf(paths,day_path,idx,Fs,letter_id):
     # set channel order
     ch_ID = ['vHPC','PFC','EMG']
     
+    # get channel list
     ch_list = list(filter(lambda k: 'adibin' in k, os.listdir(os.path.join(paths['eeg_path'],paths['subject_id'], day_path))))
     
     # pre allocate empty vectors
@@ -179,7 +171,8 @@ def lfp_edf_main(paths,Fs,time_bin):
     for i in range(0,len(subject_dir)):
         
         # create directory
-        os.mkdir(os.path.join(paths['edf_path'],subject_dir[i]))
+        if not os.path.exists(os.path.join(paths['edf_path'],subject_dir[i])):
+            os.mkdir(os.path.join(paths['edf_path'],subject_dir[i]))
         
         # update paths
         paths.update({'subject_id' : subject_dir[i]})
@@ -192,8 +185,6 @@ def lfp_edf_main(paths,Fs,time_bin):
         
         # print when an subject is done
         print('subject ', subject_dir[i], 'done' )
-                      
-
 
 
 
