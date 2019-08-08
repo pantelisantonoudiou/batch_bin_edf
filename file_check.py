@@ -6,7 +6,7 @@ Contains 4 functions
 
 1) get_file_size() - gets file size across days for one subject -subroutine
 2) df_to_excel_form() - save dataframe as excel and format -subroutine
-3) file_check_main() - Returns dataframe with file properties and saves excel file in load_path -Main
+3) file_check_main() - Returns dataframe with file properties and saves excel file in eeg_path -Main
 4) file_del(paths,thresh) - Deletes edf files smaller than threhold
 
 e.g.
@@ -23,19 +23,17 @@ Created on Mon Aug  5 15:17:36 2019
 @author: Pantelis Antonoudiou
 """
 
-
+### **** USER INTERACTION **** ###
 ## ---- SET PATHS AND PARAMETERS -------------- ##
 # define paths
-load_path = "E:/Trina_EEG_data"
-save_path = "E:/Trina_EDF"
-
+eeg_path = "C:/EEG_data"
+edf_path = "C:/EDF_data"
 # define sampling rate
 Fs = 4000;
-
 # set threshold for file size
 thresh = 80* 1e6 # bytes
 
-
+### **** Run Functions **** ###
 # run to check files before EDF conversion- get dataframe and excel output
 # df = file_check_main(paths,Fs)
 
@@ -50,39 +48,37 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm  
 import string
-#import pdb; 
-#pdb.set_trace() 
 
 # gather paths in a dict
-paths = {'load_path': load_path, 'save_path':save_path} 
+paths = {'eeg_path': eeg_path, 'edf_path':edf_path} 
     
 # get file size to check for consistency
 def get_file_size(paths,Fs):
-    """ get_file_size(load_path,Fs)
+    """ get_file_size(eeg_path,Fs)
     returns a 2D list with the time of file size for all subfolders of each subject 
     first element = subfolder_name (Day)
     second element = file duration (Hours)
     """
     # get path
-    load_path = os.path.join(paths['load_path'], paths['subject_id'])
+    eeg_path = os.path.join(paths['eeg_path'], paths['subject_id'])
     
     # create empty list
     list1 = []; 
     
     # get day directory
-    dir1 = os.listdir(os.path.join(load_path))
+    dir1 = os.listdir(os.path.join(eeg_path))
         
     for i in range(len(dir1)):
         
         # get day directory
-        file_dir = os.listdir(os.path.join(load_path,dir1[i]))
+        file_dir = os.listdir(os.path.join(eeg_path,dir1[i]))
         
         # empty list
         file_size = []
         
         for ii in range(len(file_dir)): # loop through files
             # get path
-            file = os.path.join(load_path, dir1[i], file_dir[ii])
+            file = os.path.join(eeg_path, dir1[i], file_dir[ii])
             
             # get file size
             os.path.getsize(file)
@@ -120,7 +116,7 @@ def df_to_excel_form(paths,df):
     types = ['text', 'cell', 'cell']
    
     # Create a Pandas Excel writer using XlsxWriter as the engine.
-    writer = pd.ExcelWriter(os.path.join(paths['load_path'],'file_check.xlsx'), engine='xlsxwriter')
+    writer = pd.ExcelWriter(os.path.join(paths['eeg_path'],'file_check.xlsx'), engine='xlsxwriter')
     
     # Convert the dataframe to an XlsxWriter Excel object.
     df.to_excel(writer, sheet_name='Sheet1')
@@ -166,12 +162,12 @@ def file_check_main(paths,Fs):
     df = pd.DataFrame(columns = ['Subject_ID','Day','Min_fl_size(Hours)','Files','Files_equal?'])
     
     # veirfy that loading path exists
-    if not os.path.exists(paths['load_path']):
+    if not os.path.exists(paths['eeg_path']):
         print('Loading path does not exist')
         return
     
     # get subject directory
-    subject_dir = os.listdir(paths['load_path'])  
+    subject_dir = os.listdir(paths['eeg_path'])  
     
     # loop through subjects
     for i in tqdm(range(0,len(subject_dir))):
@@ -205,12 +201,12 @@ def file_del(paths,thresh):
     """
   
     # veirfy that loading path exists
-    if not os.path.exists(paths['save_path']):
+    if not os.path.exists(paths['edf_path']):
         print('Save path does not exist')
         return
     
     # get subject directory
-    subject_dir = os.listdir(paths['save_path'])  
+    subject_dir = os.listdir(paths['edf_path'])  
     
     # loop through subjects
     for i in tqdm(range(0,len(subject_dir))):
@@ -219,7 +215,7 @@ def file_del(paths,thresh):
         paths.update({'subject_id' : subject_dir[i]})
           
         # get subject path
-        subject_path = os.path.join(paths['save_path'], paths['subject_id'])
+        subject_path = os.path.join(paths['edf_path'], paths['subject_id'])
         
         # get file directory
         dir1 = os.listdir(subject_path)

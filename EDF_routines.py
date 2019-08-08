@@ -10,8 +10,8 @@ Contains 4 functions
 
 eg. Fs = 4000; # samples per second
     time_bin = 12; # time - in hours- for each epoch 
-    load_path = "C:/Users/panton01/Desktop/Trina_EEG" # path loading folder
-    save_path = "C:/Users/panton01/Desktop/Trina_EDF" # path to new folder to be saved
+    eeg_path = "C:/Users/panton01/Desktop/EEG_data" # path loading folder
+    edf_path = "C:/Users/panton01/Desktop/EDF_data" # path to new folder to be saved
 
 # execute main function
     lfp_edf_main(paths,Fs,time_bin)
@@ -22,13 +22,13 @@ Created on Wed Jul 31 11:08:43 2019
 
 ### **** USER INTERACTION **** ###
 
-# ENTER SAMPLING RATE, TIME BIN AND PATHS #
+## ---- SET PATHS AND PARAMETERS -------------- ##
 Fs = 4000; # samples per second
 time_bin = 12; # time - in hours- for each epoch 
-load_path = "E:/Trina_EEG_data" #"C:/Users/panton01/Desktop/Trina_EEG" # path loading folder
-save_path = "E:/Trina_EDF"  #"E:/Trina_EDF" # path to new folder to be saved
+eeg_path = "C:/EEG_data" 
+edf_path = "C:/EDF_data"
 
-# Run Function
+### **** Run Function **** ###
 # lfp_edf_main(paths,Fs,time_bin)
 
 ## ------------------------------------------ ##
@@ -42,15 +42,15 @@ from tqdm import tqdm
 import numpy as np
 
  # veirfy that loading path exists
-if not os.path.exists(save_path):
-    os.makedirs(save_path)
+if not os.path.exists(edf_path):
+    os.makedirs(edf_path)
 
 # gather paths in a dict
-paths = {'load_path': load_path, 'save_path':save_path } 
+paths = {'eeg_path': eeg_path, 'edf_path':edf_path } 
     
 # get file size for one subject
-def get_file_size(load_path,Fs):
-    """ get_file_size(load_path,Fs)
+def get_file_size(eeg_path,Fs):
+    """ get_file_size(eeg_path,Fs)
     returns a 2D list with the time of file size for all subfolders of each subject 
     first element = subfolder_name (Day)
     second element = file duration (Hours)
@@ -60,15 +60,15 @@ def get_file_size(load_path,Fs):
     list1 = []
     
     # get day directory
-    dir1 = os.listdir(os.path.join(load_path))
+    dir1 = os.listdir(os.path.join(eeg_path))
         
     for i in range(len(dir1)):
         
         # get day directory
-        file_dir = os.listdir(os.path.join(load_path,dir1[i]))
+        file_dir = os.listdir(os.path.join(eeg_path,dir1[i]))
         
         # load file
-        file = os.path.join(load_path, dir1[i], file_dir[0])
+        file = os.path.join(eeg_path, dir1[i], file_dir[0])
         fp = np.memmap(file, dtype='int16' ,mode='r')
         
         # append day to list
@@ -89,7 +89,7 @@ def lfp_to_edf(paths,day_path,idx,Fs,letter_id):
     # set channel order
     ch_ID = ['vHPC','PFC','EMG']
     
-    ch_list = list(filter(lambda k: 'adibin' in k, os.listdir(os.path.join(paths['load_path'],paths['subject_id'], day_path))))
+    ch_list = list(filter(lambda k: 'adibin' in k, os.listdir(os.path.join(paths['eeg_path'],paths['subject_id'], day_path))))
     
     # pre allocate empty vectors
     channel_info = [];
@@ -101,13 +101,13 @@ def lfp_to_edf(paths,day_path,idx,Fs,letter_id):
         file = list(filter(lambda k: ch_ID[i] in k, ch_list))[0]
         
         # load memory mapped file
-        load_name = os.path.join(paths['load_path'],paths['subject_id'], day_path, file)
+        load_name = os.path.join(paths['eeg_path'],paths['subject_id'], day_path, file)
         fp = np.memmap(load_name, dtype='int16' ,mode='r')
         
         # pass file into a variable and delete memory mapped object
         data = fp[idx[0]*Fs*3600: idx[1]*Fs*3600] ; del fp
         
-        # append to list for storage
+        # append to list for storage - remove mean and scale data
         data_list.append((data - np.mean(data))/320000)
 
     # get channel properties
@@ -119,7 +119,7 @@ def lfp_to_edf(paths,day_path,idx,Fs,letter_id):
     channel_info.append(ch_dict)
 
     # create data file name + path
-    data_file = os.path.join(paths['save_path'],paths['subject_id'],day_path + '_' + letter_id+'.edf')
+    data_file = os.path.join(paths['edf_path'],paths['subject_id'],day_path + '_' + letter_id+'.edf')
     
     # intialize EDF object
     f = pyedflib.EdfWriter(data_file, 3, file_type = pyedflib.FILETYPE_EDF) 
@@ -164,28 +164,28 @@ def lfp_edf_main(paths,Fs,time_bin):
     """
     
     # veirfy that loading path exists
-    if not os.path.exists(paths['load_path']):
+    if not os.path.exists(paths['eeg_path']):
         print('Loading path does not exist')
         return
     
     # create save directory if it does not exist
-    if not os.path.exists(paths['save_path']):
-        os.makedirs(paths['save_path'])
+    if not os.path.exists(paths['edf_path']):
+        os.makedirs(paths['edf_path'])
        
     # get subject directory
-    subject_dir = os.listdir(paths['load_path'])  
+    subject_dir = os.listdir(paths['eeg_path'])  
     
     # loop through subjects
     for i in range(0,len(subject_dir)):
         
         # create directory
-        os.mkdir(os.path.join(paths['save_path'],subject_dir[i]))
+        os.mkdir(os.path.join(paths['edf_path'],subject_dir[i]))
         
         # update paths
         paths.update({'subject_id' : subject_dir[i]})
         
         # file size
-        day_list = get_file_size(os.path.join(paths['load_path'],subject_dir[i]),Fs)             
+        day_list = get_file_size(os.path.join(paths['eeg_path'],subject_dir[i]),Fs)             
         
         # separate and save files for one day       
         separate_n_save(paths, day_list,Fs, time_bin)
