@@ -1,7 +1,7 @@
 # EEG_EDF
 Batch conversion of EEG to -> EDF files
 
-# Dependancies:
+# Dependencies:
 
     1) NumPy
 
