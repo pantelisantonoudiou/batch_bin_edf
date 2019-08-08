@@ -3,13 +3,13 @@ Batch conversion of EEG to -> EDF files
 
 # Dependancies:
 
-1) NumPy
+    1) NumPy
 
-2) Pandas
+    2) Pandas
 
-3) tqdm
+    3) tqdm
 
-4) PyEDFlib - (https://github.com/holgern/pyedflib)
+    4) PyEDFlib - (https://github.com/holgern/pyedflib)
 
 # Modules:
 
