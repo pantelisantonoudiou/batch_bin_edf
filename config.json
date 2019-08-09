@@ -1,0 +1,6 @@
+{ "bin_path": "C:/Users/panton01/Desktop/data/bin/",
+"edf_path": "C:/Users/panton01/Desktop/data/edf/",
+"fs" : 4000,
+"size_thresh" : 10,
+"time_bin": 12
+}
