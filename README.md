@@ -30,4 +30,4 @@ Batch conversion of binary time-series to -> EDF files
     - Inputs must be int16 binary files.
     - One folder per subject.
     - One folder for each day of recordings placed in the subJect folder.
-    - In the day folder there should be one bin int16 file (no header) per channel.
+    - In the 'day' folder there should be one time-series binary file (no header) per channel.
