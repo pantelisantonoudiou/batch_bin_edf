@@ -1,5 +1,5 @@
 # batch_bin_edf
-Batch conversion of binary (int16) to -> EDF files
+Batch conversion of binary time-series to -> EDF files
 
 # Dependencies:
 
