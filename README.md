@@ -1,5 +1,5 @@
-# EEG_EDF
-Batch conversion of EEG to -> EDF files
+# batch_bin_edf
+Batch conversion of binary (int16) to -> EDF files
 
 # Dependencies:
 
