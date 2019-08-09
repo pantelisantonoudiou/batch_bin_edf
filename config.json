@@ -2,5 +2,14 @@
 "edf_path": "C:/Users/panton01/Desktop/data/edf/",
 "fs" : 4000,
 "size_thresh" : 10,
-"time_bin": 12
+"time_bin": 12,
+"file_norm": 320000, 
+"file_ext": ".adibin",
+"file_type": "int16",
+"ch_id":  ["vHPC","PFC","EMG"],
+"dimension": ["V","V","V"],
+"physical_max": [0.1, 0.1, 0.01],
+"physical_min": [-0.1, -0.1, -0.01],
+"digital_max": [32000, 32000, 32000],
+"digital_min": [-32000, -32000, -32000]
 }

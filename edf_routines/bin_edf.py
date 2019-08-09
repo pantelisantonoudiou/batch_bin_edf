@@ -61,16 +61,16 @@ def get_file_size(bin_path,fs):
     
 # --------------------------------------------------------------------------  #    
         
-def lfp_to_edf(paths,day_path,idx,fs,letter_id):
-    """ lfp_to_edf(paths,day_path,idx,fs,letter_id)
+def lfp_to_edf(paths,day_path,idx,fs,letter_id,config):
+    """ lfp_to_edf(paths,day_path,idx,fs,letter_id,config)
     Converts lfp to EDF across channels
     """
     
     # set channel order
-    ch_ID = ['vHPC','PFC','EMG']
+    ch_id = config['ch_id']
     
     # get channel list
-    ch_list = list(filter(lambda k: 'adibin' in k, os.listdir(os.path.join(paths['bin_path'],paths['subject_id'], day_path))))
+    ch_list = list(filter(lambda k: config['file_ext'] in k, os.listdir(os.path.join(paths['bin_path'],paths['subject_id'], day_path))))
     
     # pre allocate empty vectors
     channel_info = [];
@@ -79,31 +79,32 @@ def lfp_to_edf(paths,day_path,idx,fs,letter_id):
     for i in range(len(ch_list)):
             
         # get files in order
-        file = list(filter(lambda k: ch_ID[i] in k, ch_list))[0]
+        file = list(filter(lambda k: ch_id[i] in k, ch_list))[0]
         
         # load memory mapped file
         load_name = os.path.join(paths['bin_path'],paths['subject_id'], day_path, file)
-        fp = np.memmap(load_name, dtype='int16' ,mode='r')
+        fp = np.memmap(load_name, dtype = config['file_type'] ,mode = 'r')
         
         # pass file into a variable and delete memory mapped object
         data = fp[idx[0]*fs*3600: idx[1]*fs*3600] ; del fp
         
         # append to list for storage - remove mean and scale data
-        data_list.append((data - np.mean(data))/320000)
-
-    # get channel properties
-    ch_dict = {'label': 'vHPC', 'dimension': 'V', 'sample_rate': fs, 'physical_max': 0.1, 'physical_min': -0.1, 'digital_max': 32000, 'digital_min': -32000, 'transducer': '', 'prefilter':''}
-    channel_info.append(ch_dict)
-    ch_dict = {'label': 'PFC', 'dimension': 'V', 'sample_rate': fs, 'physical_max': 0.1, 'physical_min': -0.1, 'digital_max': 32000, 'digital_min': -32000, 'transducer': '', 'prefilter':''}
-    channel_info.append(ch_dict)
-    ch_dict = {'label': 'EMG', 'dimension': 'V', 'sample_rate': fs, 'physical_max': 0.01, 'physical_min': -0.01, 'digital_max': 32000, 'digital_min': -32000, 'transducer': '', 'prefilter':''}
-    channel_info.append(ch_dict)
+        data_list.append((data - np.mean(data))/config['file_norm'])
+        
+        # get channel properties
+        ch_dict = {'label': ch_id[i], 'dimension': config['dimension'][i], 
+                   'sample_rate': fs, 'physical_max': config['physical_max'][i],
+                   'physical_min': config['physical_min'][i], 'digital_max': config['digital_max'][i], 
+                   'digital_min': config['digital_min'][i], 'transducer': '', 'prefilter':''}
+        
+        # appent to channel info
+        channel_info.append(ch_dict)
 
     # create data file name + path
     data_file = os.path.join(paths['edf_path'],paths['subject_id'],day_path + '_' + letter_id+'.edf')
     
     # intialize EDF object
-    f = pyedflib.EdfWriter(data_file, 3, file_type = pyedflib.FILETYPE_EDF) 
+    f = pyedflib.EdfWriter(data_file, len(ch_id), file_type = pyedflib.FILETYPE_EDF) 
     
     # write file to EDF object
     f.setSignalHeaders(channel_info)
@@ -116,8 +117,8 @@ def lfp_to_edf(paths,day_path,idx,fs,letter_id):
 # --------------------------------------------------------------------------  #    
     
 # save files separated by time bin
-def separate_n_save(paths,day_list,fs,time_bin):
-    """ separate_n_save(paths,day_list,fs,time_bin)
+def separate_n_save(paths,day_list,fs,time_bin,config):
+    """ separate_n_save(paths,day_list,fs,time_bin,config)
     """
     
     for i in tqdm(range(len(day_list))): # loop through days
@@ -128,22 +129,25 @@ def separate_n_save(paths,day_list,fs,time_bin):
        for ii in range(loops): # loop through file epochs
             
            # convert lfp epochs to edf
-           lfp_to_edf(paths, day_list[i][0], [start_idx, start_idx + time_bin], fs ,ascii_lowercase[ii])
+           lfp_to_edf(paths, day_list[i][0], [start_idx, start_idx + time_bin], fs ,ascii_lowercase[ii],config)
            
            # update index
            start_idx += time_bin
        
        # convert lfp epoch smaller than time_bin to edf
        last_bin = int(day_list[i][1] % time_bin)
-       lfp_to_edf(paths, day_list[i][0], [start_idx, start_idx + last_bin], fs ,ascii_lowercase[ii+1])
+       lfp_to_edf(paths, day_list[i][0], [start_idx, start_idx + last_bin], fs ,ascii_lowercase[ii+1],config)
        
  
 # --------------------------------------------------------------------------  #
             
 # lfp to edf main program
-def lfp_edf_main(paths,fs,time_bin):
-    """ lfp_edf_main(paths,fs,time_bin)
+def lfp_edf_main(paths,config):
+    """ lfp_edf_main(paths,config)
     """
+    # unpack config parameters
+    fs = config['fs']
+    time_bin = config['time_bin']
     
     # veirfy that loading path exists
     if not os.path.exists(paths['bin_path']):
@@ -171,7 +175,7 @@ def lfp_edf_main(paths,fs,time_bin):
         day_list = get_file_size(os.path.join(paths['bin_path'],subject_dir[i]),fs)             
         
         # separate and save files for one day       
-        separate_n_save(paths, day_list,fs, time_bin)
+        separate_n_save(paths, day_list,fs, time_bin, config)
         
         # print when an subject is done
         print('subject ', subject_dir[i], 'done' )

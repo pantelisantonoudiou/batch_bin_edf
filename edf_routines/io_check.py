@@ -79,7 +79,7 @@ def get_file_size(paths,fs):
 # --------------------------------------------------------------------------  #       
    
 # save dataframe in a formatted excel format         
-def df_to_excel_form(save_path,df):
+def df_to_excel_form(save_path,df,config):
     """ df_to_excel_form(save_path,df)
     Deletes files smaller than threshold
     """
@@ -92,7 +92,7 @@ def df_to_excel_form(save_path,df):
     
     # get criteria, values and lists    
     criteria =['not containing', '<', '<']
-    values = ['True', 3, 1]
+    values = ['True', len(config['ch_id']), 1]
     types = ['text', 'cell', 'cell']
    
     # Create a Pandas Excel writer using XlsxWriter as the engine.
@@ -144,9 +144,11 @@ def df_to_excel_form(save_path,df):
 # --------------------------------------------------------------------------  #
 
 # check files before EDF conversion
-def file_check_main(paths,fs):
-    """ file_check_main(paths,fs)
+def file_check_main(paths,config):
+    """ file_check_main(paths,fs,config)
     """
+    # get fs
+    fs = config['fs']
     
     # create dataframe
     df = pd.DataFrame(columns = ['Subject_ID','Day','Min_fl_size(Hours)','Files','Files_equal?'])
@@ -179,7 +181,7 @@ def file_check_main(paths,fs):
         
     # save to excel
     save_path = paths['bin_path'][0:paths['bin_path'].rfind('/')]
-    cond = df_to_excel_form(save_path,df)
+    cond = df_to_excel_form(save_path,df,config)
     
     if all(cond) is True:
         print('Files are ready for EDF conversion.')
@@ -192,9 +194,11 @@ def file_check_main(paths,fs):
 # --------------------------------------------------------------------------  #
 
 # delete files smaller than a threshold    
-def file_del(paths,thresh):
+def file_del(paths,config):
     """ file_del(paths,thresh)
     """
+    # get size threshold
+    thresh = config['size_thresh']
   
     # veirfy that loading path exists
     if not os.path.exists(paths['edf_path']):

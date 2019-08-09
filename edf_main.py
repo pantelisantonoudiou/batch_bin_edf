@@ -20,13 +20,14 @@ except Exception as err:
 # check config
 print(config)
 
-# get arguments
+# check for argument
 if len(sys.argv)<2:
     raise Exception('Option missing e.g. python edf_del')
                     
-    
+# get argument    
 option = sys.argv[1]
-      
+
+# check for appropriate argument      
 if option not in ['edf_del','file_check', 'bin_edf']:
     raise Exception(f"No valid option provided: 'edf_del','file_check', 'bin_edf'. \n'{option}' was provided instead.")
 
@@ -41,10 +42,10 @@ if paths['bin_path'].rfind('/')-len(paths['bin_path']) is -1:
 if paths['edf_path'].rfind('/')-len(paths['edf_path']) is -1:    
       paths.update({'edf_path' : paths['edf_path'][0:len(paths['edf_path'])-1]})
 
-
+# run function according to option
 if option == 'edf_del':
-    io_check.file_del(paths,config['size_thresh'])
+    io_check.file_del(paths,config)
 elif option == 'file_check':
-    io_check.file_check_main(paths,config['fs'])
+    io_check.file_check_main(paths,config)
 elif option == 'bin_edf':
-    bin_edf.lfp_edf_main(paths,config['fs'],config['time_bin'])    
+    bin_edf.lfp_edf_main(paths,config)    
