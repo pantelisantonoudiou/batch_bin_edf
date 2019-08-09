@@ -15,9 +15,9 @@ Batch conversion of binary time-series to -> EDF files
 
 # Run:
 
-    1) Download/clone batch_bin_edf repository/
+    1) Download/clone batch_bin_edf repository.
     
-    2) Update the parameters (sampling rate, paths ...) in the config.json file/
+    2) Update the parameters (sampling rate, paths ...) in the config.json file.
     
     3) Navigate from command prompt to your local repository and run:
          
