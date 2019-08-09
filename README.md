@@ -11,18 +11,17 @@ Batch conversion of binary (int16) to -> EDF files
 
     4) PyEDFlib - (https://github.com/holgern/pyedflib)
 
-# Modules:
+# Run:
 
-file_check.py 
-
-    - contains function to test if your multi-channel EEG files are in the proper format for EEG conversion.
-
-    - contains function for deleting convered EDF files that are smaller than a threshold.
-              
-
-EDF_routines.py 
-
-    - converts EEG to EDF files.
+    1) Download/clone batch_bin_edf repository/
+    
+    2) Update the parameters (sampling rate, paths ...) in the config.json file/
+    
+    3) Navigate from command prompt to your local repository and run:
+         
+         a) $ python edf_main.py file_check         # check input sturcture for edf conversion
+         b) $ python edf_main.py bin_edf            # convert binary files to edf
+         c) $ python edf_main.py edf_del            # delete edf files smaller than a set threshold
 
 # Inputs:
 
