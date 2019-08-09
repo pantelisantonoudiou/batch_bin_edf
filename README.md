@@ -10,6 +10,8 @@ Batch conversion of binary time-series to -> EDF files
     3) tqdm
 
     4) PyEDFlib - (https://github.com/holgern/pyedflib)
+    
+    5) Json
 
 # Run:
 
