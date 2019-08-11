@@ -30,6 +30,4 @@ Batch conversion of binary time-series to -> EDF files
     - Inputs must be binary files (default  = int16).
     - One folder per subject.
     - One folder for each day of recordings placed in the subJect folder.
-    - In the 'day' folder there should be one time-series binary file (no header) per channel.
-    
-    [Sites Using React](https://github.com/facebook/react/wiki/Sites-Using-React)
+    - In the 'day' folder there should be one time-series binary file (no header) per channel
