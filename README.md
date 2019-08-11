@@ -3,15 +3,15 @@ Batch conversion of binary time-series to -> EDF files
 
 # Dependencies:
 
-    1) NumPy
+1) NumPy
 
-    2) Pandas
+2) Pandas
 
-    3) tqdm
+3) tqdm
 
-4) [PyEDFlib](https://github.com/holgern/pyedflib/blob/master/README.rst)
+4) [PyEDFlib](https://github.com/holgern/pyedflib/)
     
-    5) Json
+5) Json
 
 # Run:
 
